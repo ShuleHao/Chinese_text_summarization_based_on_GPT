@@ -41,7 +41,7 @@ def setup_train_args():
     parser.add_argument('--model_config', default='config/model_config_dialogue_small.json', type=str, required=False,
                         help='选择模型参数')
     parser.add_argument('--vocab_path', default='vocabulary/vocab_small.txt', type=str, required=False, help='选择词库')
-    parser.add_argument('--train_raw_path', default='data/train_with_summary.txt', type=str, required=False, help='原始训练语料')
+    parser.add_argument('--train_raw_path', default='data/nlpcc2017_clean.json', type=str, required=False, help='原始训练语料')
     parser.add_argument('--train_tokenized_path', default='data/train_tokenized.txt', type=str,required=False,help='将原始训练语料tokenize之后的数据的存放位置')
     parser.add_argument('--log_path', default='data/training.log', type=str, required=False, help='训练日志存放位置')
     parser.add_argument('--epochs', default=5, type=int, required=False, help='训练的轮次')
@@ -52,6 +52,8 @@ def setup_train_args():
     parser.add_argument('--gradient_accumulation', default=2, type=int, required=False, help='梯度积累')
     parser.add_argument('--max_grad_norm', default=1.0, type=float, required=False)
     parser.add_argument('--dialogue_model_output_path', default='summary_model/', type=str, required=False,
+                        help='对话模型输出路径')
+    parser.add_argument('--pretrained_model', default='summary_model/', type=str, required=False,
                         help='对话模型输出路径')
     parser.add_argument('--writer_dir', default='tensorboard_summary/', type=str, required=False, help='Tensorboard路径')
     parser.add_argument('--seed', type=int, default=None, help='设置种子用于生成随机数，以使得训练的结果是确定的')
@@ -263,10 +265,7 @@ def train(model, device, train_list, multi_gpu, args):
                     logger.info(str(exception))
                     raise exception
         logger.info('saving model for epoch {}'.format(epoch + 1))
-        if args.train_mmi:  # 当前训练MMI模型
-            model_path = join(args.mmi_model_output_path, 'model_epoch{}'.format(epoch + 1))
-        else:  # 当前训练对话模型
-            model_path = join(args.dialogue_model_output_path, 'model_epoch{}'.format(epoch + 1))
+        model_path = join(args.dialogue_model_output_path, 'model_epoch{}'.format(epoch + 1))
         if not os.path.exists(model_path):
             os.mkdir(model_path)
         model_to_save = model.module if hasattr(model, 'module') else model
@@ -331,9 +330,6 @@ def main():
     # 创建对话模型的输出目录
     if not os.path.exists(args.dialogue_model_output_path):
         os.mkdir(args.dialogue_model_output_path)
-    # 创建MMI模型的输出目录
-    if not os.path.exists(args.mmi_model_output_path):
-        os.mkdir(args.mmi_model_output_path)
     # 加载GPT2模型
     model, n_ctx = create_model(args, vocab_size)
     model.to(device)
