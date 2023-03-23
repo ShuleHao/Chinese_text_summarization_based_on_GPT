@@ -37,6 +37,9 @@ python3.6、 transformers==2.1.1、pytorch==1.9.0
 链接：https://pan.baidu.com/s/1k-EbJuD7yaawSQQ83jt_fg?pwd=6666 
 提取码：6666
 ## 模型使用方法
+模型下载地址：
+链接：https://pan.baidu.com/s/1J8wXwo2kNIUpydSo0zsNHA?pwd=6666 
+提取码：6666
 ##### 将GPT2-nlpcc-summary参数下载，放入summary_model文件夹中，运行interact.py即可。
 ## 联系作者
 - 邮件我：shulehao@gmail.com
